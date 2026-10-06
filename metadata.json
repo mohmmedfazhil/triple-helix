@@ -1,0 +1,8 @@
+{
+  "name": "Remix Finalll",
+  "description": "Government-Academia-Industry Collaboration Platform for district innovation problem solving, milestone tracking, and certification.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

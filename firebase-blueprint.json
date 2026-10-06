@@ -1,0 +1,179 @@
+{
+  "entities": {
+    "ProblemStatement": {
+      "title": "Problem Statement",
+      "description": "Civic problem statement that can be claimed by at most one academic institution via atomic transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "psId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "department": { "type": "string" },
+        "sector": { "type": "string" },
+        "status": { "type": "string", "enum": ["Available", "Claimed"] },
+        "claimedByInstitutionId": { "type": "string" },
+        "claimedByInstitutionName": { "type": "string" },
+        "claimedAt": { "type": "string" },
+        "solutionCount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "psId", "title", "category", "status"]
+    },
+    "Institution": {
+      "title": "Academic Institution",
+      "description": "Accredited collegiate institution with 1 claimed problem statement and a 300-solution quota",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" },
+        "coordinatorEmail": { "type": "string" },
+        "coordinatorName": { "type": "string" },
+        "coordinatorPhone": { "type": "string" },
+        "claimedProblemStatementId": { "type": "string" },
+        "claimedProblemStatementTitle": { "type": "string" },
+        "solutionCount": { "type": "number" },
+        "lastSubmissionAt": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "name", "code", "coordinatorEmail"]
+    },
+    "Solution": {
+      "title": "Student Team Solution",
+      "description": "Solution nomination submitted by an institution (up to 300 limit) before the global deadline",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "psId": { "type": "string" },
+        "institutionId": { "type": "string" },
+        "institutionName": { "type": "string" },
+        "title": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 50000 },
+        "abstract": { "type": "string", "maxLength": 10000 },
+        "technologyBucket": { "type": "string" },
+        "youtubeUrl": { "type": "string" },
+        "documentUrl": { "type": "string" },
+        "documentName": { "type": "string" },
+        "currentStage": { "type": "string", "enum": ["Round 1", "Round 2", "Round 3", "Completed", "Rejected"] },
+        "assignedMentorId": { "type": "string" },
+        "assignedMentorName": { "type": "string" },
+        "submittedAt": { "type": "string" },
+        "submissionIndex": { "type": "number" }
+      },
+      "required": ["id", "psId", "institutionId", "title", "description", "abstract", "technologyBucket", "currentStage"]
+    },
+    "Mentor": {
+      "title": "Industry Mentor",
+      "description": "Corporate domain architect registered across technology domains",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "organization": { "type": "string" },
+        "domains": { "type": "array" },
+        "assignedInstitutionIds": { "type": "array" },
+        "assignedProblemStatementIds": { "type": "array" },
+        "completedEvaluationsCount": { "type": "number" },
+        "totalAssignedSubmissionsCount": { "type": "number" }
+      },
+      "required": ["id", "name", "email"]
+    },
+    "Evaluation": {
+      "title": "Evaluation Record",
+      "description": "100-mark rubric evaluation submitted by mentor for a solution stage",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "solutionId": { "type": "string" },
+        "psId": { "type": "string" },
+        "institutionId": { "type": "string" },
+        "mentorId": { "type": "string" },
+        "mentorName": { "type": "string" },
+        "round": { "type": "string", "enum": ["Round 1", "Round 2", "Round 3"] },
+        "decision": { "type": "string", "enum": ["Selected", "Rejected"] },
+        "totalMarks": { "type": "number" },
+        "feedback": { "type": "string" },
+        "evaluatedAt": { "type": "string" }
+      },
+      "required": ["id", "solutionId", "mentorId", "round", "decision", "totalMarks"]
+    },
+    "MailQueue": {
+      "title": "Mail Queue Notification",
+      "description": "Outbox record written when evaluation completes to notify institution POC",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "to": { "type": "string" },
+        "subject": { "type": "string" },
+        "body": { "type": "string" },
+        "type": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "to", "subject", "body", "type", "status"]
+    },
+    "StaffUser": {
+      "title": "Staff User",
+      "description": "Unlisted administrative account with role SUPER_ADMIN or COLLECTOR",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["SUPER_ADMIN", "COLLECTOR"] },
+        "name": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "email", "role"]
+    },
+    "GlobalConfig": {
+      "title": "Global System Configuration",
+      "description": "Global deadline timestamp and quota settings",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "submissionDeadline": { "type": "string" },
+        "maxSolutionsPerInstitution": { "type": "number" },
+        "strictLockingEnabled": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "submissionDeadline", "maxSolutionsPerInstitution"]
+    }
+  },
+  "firestore": {
+    "/problem_statements/{psId}": {
+      "schema": { "$ref": "#/entities/ProblemStatement" },
+      "description": "Collection of district problem statements with atomic claiming locks"
+    },
+    "/institutions/{institutionId}": {
+      "schema": { "$ref": "#/entities/Institution" },
+      "description": "Registered academic institutions and their claimed statement and quota progress"
+    },
+    "/solutions/{solutionId}": {
+      "schema": { "$ref": "#/entities/Solution" },
+      "description": "Student team solutions (maximum 300 per institution, checked before deadline)"
+    },
+    "/mentors/{mentorId}": {
+      "schema": { "$ref": "#/entities/Mentor" },
+      "description": "Industry mentors assigned to colleges and statements"
+    },
+    "/evaluations/{evaluationId}": {
+      "schema": { "$ref": "#/entities/Evaluation" },
+      "description": "Evaluation rubrics and decisions by round"
+    },
+    "/mail_queue/{mailId}": {
+      "schema": { "$ref": "#/entities/MailQueue" },
+      "description": "Mail queue records to notify institution POCs"
+    },
+    "/staff_users/{userId}": {
+      "schema": { "$ref": "#/entities/StaffUser" },
+      "description": "Staff access records for Super Admin and Collector roles"
+    },
+    "/global_config/{configId}": {
+      "schema": { "$ref": "#/entities/GlobalConfig" },
+      "description": "Global deadlines and configuration settings"
+    }
+  }
+}
